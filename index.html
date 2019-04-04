@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <title>笑联数据大盘</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    @font-face {
+      font-family: 'Digiface';
+      src: url('./font/Digiface.ttf') format('truetype');
+    }
+    html, body, .container {
+      height: 100vh;
+    }
+    html {
+      font-size: 12px;
+      font: caption;
+    }
+    body {
+      font: caption;
+      background-color: #0e163c;
+      background-image: url(./images/grid.png);
+    }
+    .page-header {
+      height: 4vh;
+      text-align: center;
+      font-size: 2.5rem;
+      background: linear-gradient(to bottom, #0a1138, #2a3387);
+    }
+    .header-content {
+      display: inline-block;
+      width: 20rem;
+      height: 8vh;
+      line-height: 8vh;
+      border-radius: 6rem;
+      background: linear-gradient(to bottom, #0a1138, #2a3387, #323291);
+    }
+    .header-content span{
+      font-weight: bold;
+      background-image: -webkit-linear-gradient(bottom, #6d9df6, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .page-body {
+      height: 96vh;
+      display: flex;
+      padding: 1rem;
+      background: rgba(0,0,0,0.3);
+      justify-content: space-between;
+    }
+    .body-left, .body-main, .body-right {
+      display: inline-block;
+      height: 90vh;
+    }
+    .body-left, .body-right {
+      width: 24%;
+    }
+    .body-main {
+      width: 50%;
+    }
+    .left-top, .left-bottom, .right-top, .right-bottom {
+      height: 45vh;
+    }
+    .item-title {
+      font-size: 1.3rem;
+      color: #2ffffb;
+      margin-bottom: 0.5rem;
+    }
+    .item-count {
+      height: 2.5rem;
+      line-height: 2.5rem;
+      display: inline-block;
+      padding: 0 1rem;
+    }
+    .item-name {
+      color: #2ffffb;
+      font-size: 1rem;
+      text-align: center;
+      background: url(./images/left.png) left no-repeat, url(./images/right.png) right no-repeat;
+      background-size: 25% 100%;
+      margin: 0.6rem 0;
+    }
+    .lcd-font .lcd-number, .lcd-font .lcd-bg {
+      font-family: Digiface;
+      font-size: 3rem;
+    }
+    .lcd-font .lcd-number {
+      color: #ffa738;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .lcd-font .lcd-bg {
+      color: rgba(252, 183, 84, 0.2);
+      position: relative;
+      top: 0;
+      left: 0;
+      display: inline-block;
+    }
+    .lcd-font .lcd-unit {
+      padding-left: 0.5rem;
+      font-size: 0.9rem;
+      display: inline-block;
+      color: #ffa738;
+    }
+    .four-angle {
+      position: relative;
+      background: rgba(1, 8, 19, 0.5);
+      background-repeat: repeat;
+    }
+    .four-angle .left-top, .four-angle .left-bottom, .four-angle .right-top, .four-angle .right-bottom{
+      position: absolute;
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+    .four-angle .left-top {
+      left: 0;
+      top: 0;
+      border-left: solid 0.1rem #08FFFC;
+      border-top: solid 0.1rem #08FFFC;
+    }
+    .four-angle .left-bottom {
+      left: 0;
+      bottom: 0;
+      border-left: solid 0.1rem #08FFFC;
+      border-bottom: solid 0.1rem #08FFFC;
+    }
+    .four-angle .right-top {
+      right: 0;
+      top: 0;
+      border-right: solid 0.1rem #08FFFC;
+      border-top: solid 0.1rem #08FFFC;
+    }
+    .four-angle .right-bottom {
+      right: 0;
+      bottom: 0;
+      border-right: solid 0.1rem #08FFFC;
+      border-bottom: solid 0.1rem #08FFFC;
+    }
+    .title-line {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+    }
+    .chart.temp-status {
+      position: absolute;
+      bottom: 0;
+      left: 30%;
+    }
+    .temp-status {
+      width: 60%;
+      display: inline-block;
+      margin-bottom: -5vh;
+    }
+    .body-main {
+      position: relative;
+      top: 0;
+      left: 0;
+    }
+    .chart.map {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .main-top {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40%;
+      height: 60vh;
+    }
+    .main-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 32vh;
+      display: flex;
+      justify-content: space-between;
+    }
+    .main-left, .main-right {
+      width: 48%;
+      display: inline-block;
+    }
+    .chart.online {
+      padding: 0.8rem;
+    }
+    .table-row {
+      display: flex;
+      height: 2rem;
+      align-items: center;
+    }
+    .row-school, .row-users, .row-status {
+      font-size: 0.6rem;
+      display: inline-block;
+      color: #999999;
+    }
+    .row-school {
+      font-size: 0.8rem;
+      width: 32%;
+      line-height: 2rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: #fff;
+    }
+    .row-school span {
+      display: inline-block;
+      height: 1rem;
+      width: 1rem;
+      border-radius: 0.2rem;
+      background: #15705E;
+      line-height: 1rem;
+      text-align: center;
+      margin-right: 0.3rem;
+    }
+    .table-row:first-child .row-school span {
+      background: #FF4200;
+    }
+    .table-row:nth-child(2) .row-school span {
+      background: #FFC000;
+    }
+    .row-users {
+      width: 53%;
+    }
+    .user-text {
+      line-height: 1rem;
+    }
+    .text-active {
+      font-family: DigiFace;
+      color: #08fffc;
+      font-size: 1rem;
+    }
+    .text-total {
+      font-family: DigiFace;
+      display: inline-block;
+      color: #00918f;
+      font-size: 0.7rem;
+    }
+    .user-line {
+      line-height: 0.2rem;
+    }
+    .user-line span {
+      width: 7%;
+      height: 0.2rem;
+      margin-right: 0.2rem;
+      border: none;
+      display: inline-block;
+      border-bottom: solid 0.13rem #353D4A;
+    }
+    .user-line span.active {
+      border-bottom-color: #00918F;
+    }
+    .row-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .row-status span {
+      font-size: 0.7rem;
+    }
+    .row-status {
+      width: 15%;
+      margin-left: 0.2rem;
+    }
+  </style>
+  <script type="text/javascript" src="./jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="./utils.js"></script>
+  <script type="text/javascript" src="./echarts.min.js"></script>
+  <script type="text/javascript" src="./china.js"></script>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="header-content">
+          <span>笑联数据大盘</span>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="body-left">
+          <div class="left-top">
+            <div class="item-title">充值总金额</div>
+            <div class="item-count four-angle lcd-font">
+              <div class="lcd-bg">
+                <div id="charge" class="lcd-number">3802972</div>
+                88888888
+              </div>
+              <div class="lcd-unit">元</div>
+            </div>
+            <div class="item-name">充值金额分布统计</div>
+            <div class="item-chart four-angle">
+              <div class="chart charge" style="height: 28vh;"></div>
+            </div>
+          </div>
+          <div class="left-bottom">
+            <div class="item-title">累计用水量</div>
+            <div class="item-count four-angle lcd-font">
+              <div class="lcd-bg">
+                <div id="useWater" class="lcd-number">9476.58</div>
+                88888.88
+              </div>
+              <div class="lcd-unit">T</div>
+            </div>
+            <div class="item-name">用水量时间段对比统计</div>
+            <div class="item-chart four-angle">
+              <div class="chart water" style="height: 28vh;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="body-main">
+          <div class="chart map" style="width: 80%;height: 60vh;"></div>
+          <div class="main-top">
+            <div class="item-title">在线总人数</div>
+            <div class="item-count four-angle lcd-font">
+              <div class="lcd-bg">
+                <div id="online" class="lcd-number">259468</div>
+                8888888
+              </div>
+              <div class="lcd-unit">/2579468人</div>
+            </div>
+            <div class="item-name">今日消费人数排名</div>
+            <div class="item-chart four-angle">
+              <div class="chart online" style="height: 22rem;">
+              </div>
+            </div>
+          </div>
+          <div class="main-bottom">
+            <div class="main-left">
+              <div class="item-title">累计发送消费预警</div>
+              <div class="item-count four-angle lcd-font">
+                <div class="lcd-bg">
+                  <div id="warn" class="lcd-number">12473</div>
+                  888888
+                </div>
+                <div class="lcd-unit">次</div>
+              </div>
+              <div class="item-name">设备状态分布统计</div>
+              <div class="item-chart four-angle">
+                <div class="chart device" style="height: 15vh;"></div>
+              </div>
+            </div>
+            <div class="main-right">
+              <div class="item-title">累计出现异常状态</div>
+              <div class="item-count four-angle lcd-font">
+                <div class="lcd-bg">
+                  <div id="abnormal" class="lcd-number">258416</div>
+                  8888888
+                </div>
+                <div class="lcd-unit">次</div>
+              </div>
+              <div class="item-name">异常状态数据统计</div>
+              <div class="item-chart four-angle">
+                <div class="chart abnormal" style="height: 15vh;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body-right">
+          <div class="right-top">
+            <div class="item-title">维修服务处理量</div>
+            <div class="item-count four-angle lcd-font">
+              <div class="lcd-bg">
+                <div id="repair" class="lcd-number">9839</div>
+                88888
+              </div>
+              <div class="lcd-unit">个</div>
+            </div>
+            <div class="item-name">服务质量数据对比图</div>
+            <div class="item-chart four-angle">
+              <div class="chart repair" style="height: 28vh;"></div>
+            </div>
+          </div>
+          <div class="right-bottom">
+            <div class="item-title">当前水温</div>
+            <div class="title-line">
+              <div class="item-count four-angle lcd-font">
+                <div class="lcd-bg">
+                  <div id="temp" class="lcd-number">55.5</div>
+                  888.8
+                </div>
+                <div class="lcd-unit">°C</div>
+              </div>
+              <div class="chart temp-status" style="height: 12vh;"></div>
+            </div>
+            <div class="item-name">水温时间段对比统计</div>
+            <div class="item-chart four-angle">
+              <div class="chart temp" style="height:28vh;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $.globalData = {}
+        calcRem();
+        initDom();
+        initCharge();
+        initWater();
+        initRepair();
+        initTemp();
+        $('.chart.online').table();
+        initMap();
+        initDeviceStatus();
+        initAbnormal();
+      })
+    </script>
+  </body>
+</html>
